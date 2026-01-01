@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Główny widok aplikacji
+@available(macOS 13.0, *)
 struct ContentView: View {
     @StateObject private var historyManager = HistoryManager()
     @StateObject private var clipboardService: ClipboardService
@@ -83,8 +84,4 @@ struct ContentView: View {
             }
         }
     }
-}
-
-#Preview {
-    ContentView()
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Lista historii schowka
+@available(macOS 13.0, *)
 struct HistoryListView: View {
     @ObservedObject var historyManager: HistoryManager
     @State private var searchText = ""
@@ -101,15 +102,4 @@ struct HistoryListView: View {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(content, forType: .string)
     }
-}
-
-#Preview {
-    @State var historyManager = HistoryManager()
-    
-    HistoryListView(historyManager: historyManager)
-        .onAppear {
-            historyManager.addItem("Przykładowy tekst 1")
-            historyManager.addItem("Drugi element")
-            historyManager.addItem("https://example.com")
-        }
 }

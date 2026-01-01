@@ -1,6 +1,7 @@
 import Foundation
 
 /// Serwis do zarządzania historią schowka
+@available(macOS 13.0, *)
 class HistoryManager: ObservableObject {
     @Published var items: [ClipboardItem] = []
     

@@ -2,6 +2,7 @@ import Foundation
 import AppKit
 
 /// Serwis do monitorowania zmian w schowku systemowym
+@available(macOS 13.0, *)
 class ClipboardService: ObservableObject {
     @Published var currentContent: String = ""
     

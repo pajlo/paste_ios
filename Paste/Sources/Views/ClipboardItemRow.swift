@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Wiersz reprezentujący element historii
+@available(macOS 13.0, *)
 struct ClipboardItemRow: View {
     let item: ClipboardItem
     let onCopy: (String) -> Void
@@ -54,13 +55,4 @@ struct ClipboardItemRow: View {
             isHovering = hovering
         }
     }
-}
-
-#Preview {
-    ClipboardItemRow(
-        item: ClipboardItem(content: "To jest przykładowy tekst z historii schowka"),
-        onCopy: { _ in },
-        onDelete: { _ in }
-    )
-    .padding()
 }

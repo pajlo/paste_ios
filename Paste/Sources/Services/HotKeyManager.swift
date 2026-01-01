@@ -6,7 +6,7 @@ typealias HotKeyHandler = () -> Void
 
 /// Serwis do obsługi globalnych skrótów klawiszowych
 class HotKeyManager {
-    private var hotKeys: [UInt32: HotKeyHandler] = [:]
+    var hotKeys: [UInt32: HotKeyHandler] = [:]
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
     

@@ -1,5 +1,6 @@
 import SwiftUI
 
+@available(macOS 13.0, *)
 @main
 struct PasteApp: App {
     @StateObject private var historyManager = HistoryManager()
@@ -74,7 +75,9 @@ struct PasteApp: App {
                 
                 Divider()
                 
-                Button("Zamknij", action: NSApplication.shared.terminate)
+                Button("Zamknij") {
+                    NSApplication.shared.terminate(nil)
+                }
                     .frame(maxWidth: .infinity)
                     .padding()
             }
