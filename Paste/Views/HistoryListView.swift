@@ -1,138 +1,115 @@
 import SwiftUI
 
-/// Widok listy historii schowka
+/// Lista historii schowka
 struct HistoryListView: View {
-    @StateObject private var historyManager = HistoryManager.shared
+    @ObservedObject var historyManager: HistoryManager
     @State private var searchText = ""
-    @State private var selectedItem: ClipboardItem?
     
-    var filteredHistory: [ClipboardItem] {
+    var filteredItems: [ClipboardItem] {
         if searchText.isEmpty {
-            return historyManager.history
+            return historyManager.items
+        } else {
+            return historyManager.items.filter { $0.content.localizedCaseInsensitiveContains(searchText) }
         }
-        return historyManager.search(query: searchText)
     }
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            VStack(spacing: 12) {
-                HStack {
-                    Image(systemName: "clock.fill")
-                        .font(.system(size: 14, weight: .semibold))
-                    
-                    Text("Historia schowka")
-                        .font(.system(.headline, design: .default))
-                    
-                    Spacer()
-                    
-                    Button(action: clearHistory) {
-                        Image(systemName: "trash.fill")
-                            .font(.system(size: 14))
+            // Pasek wyszukiwania
+            HStack {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.secondary)
+                
+                TextField("Szukaj w historii...", text: $searchText)
+                    .textFieldStyle(.roundedBorder)
+                
+                if !searchText.isEmpty {
+                    Button(action: { searchText = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .foregroundColor(.red)
-                    .help("Wyczyść całą historię")
-                }
-                
-                // Search bar
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.secondary)
-                    
-                    TextField("Szukaj...", text: $searchText)
-                        .textFieldStyle(.roundedBorder)
-                    
-                    if !searchText.isEmpty {
-                        Button(action: { searchText = "" }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
-                        }
-                        .buttonStyle(.plain)
-                    }
                 }
             }
-            .padding(12)
+            .padding()
             .background(Color(.controlBackgroundColor))
             
             Divider()
             
-            // History list
-            if filteredHistory.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "clipboard.fill")
+            if filteredItems.isEmpty {
+                VStack(spacing: 16) {
+                    Image(systemName: "doc.text")
                         .font(.system(size: 48))
                         .foregroundColor(.secondary)
                     
-                    Text(searchText.isEmpty ? "Brak elementów w historii" : "Brak wyników")
-                        .font(.system(.body, design: .default))
+                    Text(searchText.isEmpty ? "Historia jest pusta" : "Nie znaleziono elementów")
+                        .font(.headline)
                         .foregroundColor(.secondary)
                     
                     if searchText.isEmpty {
-                        Text("Skopiuj coś aby rozpocząć")
-                            .font(.system(.caption, design: .default))
+                        Text("Zacznij kopować, aby historię się wypełniła")
+                            .font(.caption)
                             .foregroundColor(.secondary)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color(.textBackgroundColor))
-                
             } else {
                 ScrollView {
                     VStack(spacing: 8) {
-                        ForEach(filteredHistory) { item in
+                        ForEach(filteredItems) { item in
                             ClipboardItemRow(
                                 item: item,
-                                onDelete: { historyManager.removeItem(id: $0) },
-                                onSelect: { selected in
-                                    copyToClipboard(selected)
-                                    selectedItem = selected
+                                onCopy: { content in
+                                    copyToClipboard(content)
+                                },
+                                onDelete: { id in
+                                    historyManager.removeItem(with: id)
                                 }
                             )
                         }
                     }
-                    .padding(8)
+                    .padding()
                 }
             }
             
             Divider()
             
-            // Footer with info
-            HStack(spacing: 8) {
-                Text("Elementy: \(filteredHistory.count)")
-                    .font(.system(.caption, design: .default))
-                    .foregroundColor(.secondary)
+            // Pasek narzędzi
+            HStack {
+                Button(action: {
+                    historyManager.clearHistory()
+                }) {
+                    Label("Wyczyść", systemImage: "trash")
+                }
+                .disabled(historyManager.items.isEmpty)
                 
                 Spacer()
                 
-                Text("Cmd+Shift+V aby otworzyć")
-                    .font(.system(.caption, design: .default))
+                Text(filteredItems.count == historyManager.items.count
+                    ? "\(historyManager.items.count) elementów"
+                    : "\(filteredItems.count) z \(historyManager.items.count)")
+                    .font(.caption)
                     .foregroundColor(.secondary)
             }
-            .padding(8)
+            .padding()
             .background(Color(.controlBackgroundColor))
         }
-        .frame(minWidth: Constants.windowWidth, minHeight: Constants.windowHeight)
     }
     
-    private func copyToClipboard(_ item: ClipboardItem) {
-        ClipboardService.shared.setContent(item.content)
-    }
-    
-    private func clearHistory() {
-        let alert = NSAlert()
-        alert.messageText = "Czy na pewno chcesz wyczyścić historię?"
-        alert.informativeText = "Nie będzie można cofnąć tej operacji."
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: "Wyczyść")
-        alert.addButton(withTitle: "Anuluj")
-        
-        if alert.runModal() == .alertFirstButtonReturn {
-            historyManager.clearHistory()
-        }
+    private func copyToClipboard(_ content: String) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(content, forType: .string)
     }
 }
 
 #Preview {
-    HistoryListView()
+    @State var historyManager = HistoryManager()
+    
+    HistoryListView(historyManager: historyManager)
+        .onAppear {
+            historyManager.addItem("Przykładowy tekst 1")
+            historyManager.addItem("Drugi element")
+            historyManager.addItem("https://example.com")
+        }
 }

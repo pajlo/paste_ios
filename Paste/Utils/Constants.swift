@@ -1,27 +1,37 @@
 import Foundation
 
-/// Stałe konfiguracyjne aplikacji
+/// Stałe aplikacji
 struct Constants {
-    // MARK: - App Configuration
-    static let appName = "Paste"
-    static let appVersion = "1.0.0"
-    static let bundleIdentifier = "com.pajlo.paste"
+    // MARK: - Wymiary
+    struct Size {
+        static let windowWidth: CGFloat = 600
+        static let windowHeight: CGFloat = 500
+        static let itemRowHeight: CGFloat = 60
+        static let cornerRadius: CGFloat = 12
+    }
     
-    // MARK: - History Configuration
-    static let maxHistoryItems = 10
-    static let updateCheckInterval: TimeInterval = 0.5
-    static let maxItemSize: Int = 5 * 1024 * 1024  // 5MB
+    // MARK: - Kolory
+    struct Colors {
+        static let accentColor = "AccentColor"
+        static let backgroundColor = "BackgroundColor"
+    }
     
-    // MARK: - Hotkey Configuration
-    static let hotKeyCode: UInt16 = 9  // V key
-    // Modifiers: command (⌘) + shift (⇧)
+    // MARK: - Serwis schowka
+    struct Clipboard {
+        static let maxHistoryItems = 10
+        static let monitoringInterval: TimeInterval = 0.5
+    }
     
-    // MARK: - Storage
-    static let historyStorageKey = "com.pajlo.paste.history"
+    // MARK: - Historia
+    struct History {
+        static let storageKey = "clipboard_history"
+        static let previewMaxLength = 100
+    }
     
-    // MARK: - UI
-    static let windowWidth: CGFloat = 400
-    static let windowHeight: CGFloat = 500
-    static let cornerRadius: CGFloat = 8
-    static let itemRowHeight: CGFloat = 60
+    // MARK: - HotKey
+    struct HotKey {
+        static let vKeyCode: UInt32 = 9 // Kod klawisza V
+        static let cmdModifier: UInt32 = 1 << 20
+        static let shiftModifier: UInt32 = 1 << 17
+    }
 }

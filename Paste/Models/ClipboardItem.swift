@@ -1,64 +1,49 @@
 import Foundation
 
-/// Reprezentuje pojedynczy element historii schowka
-struct ClipboardItem: Identifiable, Codable {
+/// Typ danych w schowku
+enum ClipboardType: String, Codable {
+    case text
+    case url
+    case image
+    case other
+}
+
+/// Model reprezentujący pojedynczy element historii schowka
+struct ClipboardItem: Codable, Identifiable, Equatable {
     let id: UUID
-    var content: String
-    var contentType: ContentType
-    var timestamp: Date
-    var metadata: [String: String]?
+    let content: String
+    let timestamp: Date
+    let type: ClipboardType
     
-    /// Typ zawartości skopiowanej do schowka
-    enum ContentType: String, Codable, Hashable {
-        case text = "text"
-        case image = "image"
-        case file = "file"
-        
-        var displayName: String {
-            switch self {
-            case .text: return "Tekst"
-            case .image: return "Obraz"
-            case .file: return "Plik"
-            }
-        }
-    }
-    
-    /// Inilializer
-    init(
-        content: String,
-        contentType: ContentType = .text,
-        timestamp: Date = Date(),
-        metadata: [String: String]? = nil,
-        id: UUID = UUID()
-    ) {
-        self.id = id
-        self.content = content
-        self.contentType = contentType
-        self.timestamp = timestamp
-        self.metadata = metadata
-    }
-    
-    /// Preview zawartości (obcięty tekst do 100 znaków)
+    /// Zwraca skrócony podgląd zawartości (pierwsze 100 znaków)
     var preview: String {
-        let text = content.replacingOccurrences(of: "\n", with: " ")
-        return text.count > 100 ? String(text.prefix(100)) + "..." : text
+        let maxLength = 100
+        if content.count > maxLength {
+            return String(content.prefix(maxLength)) + "..."
+        }
+        return content
     }
     
-    /// Sformatowana data i godzina
+    /// Zwraca sformatowaną datę i godzinę
     var formattedTime: String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         formatter.dateStyle = .short
+        formatter.locale = Locale(identifier: "pl_PL")
         return formatter.string(from: timestamp)
     }
     
-    /// Hash dla porównywania
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+    init(content: String, type: ClipboardType = .text) {
+        self.id = UUID()
+        self.content = content
+        self.timestamp = Date()
+        self.type = type
     }
     
-    /// Równość
-    static func == (lhs: ClipboardItem, rhs: ClipboardItem) -> Bool {
-        lhs.id == rhs.id
+    init(id: UUID, content: String, timestamp: Date, type: ClipboardType) {
+        self.id = id
+        self.content = content
+        self.timestamp = timestamp
+        self.type = type
     }
 }

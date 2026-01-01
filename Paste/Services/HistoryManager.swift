@@ -1,115 +1,68 @@
 import Foundation
 
-/// Menedżer historii schowka - zarządza przechowywaniem i pobieraniem elementów
-class HistoryManager: NSObject, ObservableObject {
-    static let shared = HistoryManager()
+/// Serwis do zarządzania historią schowka
+class HistoryManager: ObservableObject {
+    @Published var items: [ClipboardItem] = []
     
-    @Published private(set) var history: [ClipboardItem] = []
-    private let storageKey = "com.pajlo.paste.history"
+    private let defaults = UserDefaults.standard
+    private let historyKey = "clipboard_history"
     private let maxItems = 10
-    private let queue = DispatchQueue(label: "com.pajlo.paste.history", attributes: .concurrent)
     
-    override init() {
-        super.init()
-        loadFromStorage()
+    init() {
+        loadHistory()
     }
     
-    // MARK: - Public Methods
-    
-    /// Dodaj nowy element do historii
-    func addItem(_ item: ClipboardItem) {
-        queue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-            
-            // Usuń duplikaty (jeśli element o tej samej zawartości już istnieje)
-            self.history.removeAll { $0.content == item.content }
-            
-            // Dodaj nowy element na początek
-            self.history.insert(item, at: 0)
-            
-            // Ogranicz do maxItems
-            if self.history.count > self.maxItems {
-                self.history = Array(self.history.prefix(self.maxItems))
-            }
-            
-            // Zapisz do storage
-            DispatchQueue.main.async {
-                self.saveToStorage()
-                self.objectWillChange.send()
-            }
+    /// Dodaje nowy element do historii
+    func addItem(_ content: String) {
+        // Sprawdzenie, czy element jest identyczny z ostatnim
+        if let lastItem = items.first, lastItem.content == content {
+            return // Nie dodawaj duplikatu
         }
-    }
-    
-    /// Pobierz całą historię
-    func getHistory() -> [ClipboardItem] {
-        var result: [ClipboardItem] = []
-        queue.sync {
-            result = self.history
+        
+        let newItem = ClipboardItem(content: content)
+        items.insert(newItem, at: 0)
+        
+        // Ogranicz do maksymalnie 10 elementów
+        if items.count > maxItems {
+            items = Array(items.prefix(maxItems))
         }
-        return result
+        
+        saveHistory()
     }
     
-    /// Usuń element z historii
-    func removeItem(id: UUID) {
-        queue.async(flags: .barrier) { [weak self] in
-            self?.history.removeAll { $0.id == id }
-            DispatchQueue.main.async {
-                self?.saveToStorage()
-                self?.objectWillChange.send()
-            }
-        }
+    /// Usuwa element z historii
+    func removeItem(with id: UUID) {
+        items.removeAll { $0.id == id }
+        saveHistory()
     }
     
-    /// Wyczyść całą historię
+    /// Usuwa wszystkie elementy z historii
     func clearHistory() {
-        queue.async(flags: .barrier) { [weak self] in
-            self?.history.removeAll()
-            DispatchQueue.main.async {
-                self?.saveToStorage()
-                self?.objectWillChange.send()
-            }
-        }
+        items.removeAll()
+        saveHistory()
     }
     
-    /// Wyszukaj w historii (case-insensitive)
-    func search(query: String) -> [ClipboardItem] {
-        let lowercaseQuery = query.lowercased()
-        return history.filter { item in
-            item.content.lowercased().contains(lowercaseQuery) ||
-            item.preview.lowercased().contains(lowercaseQuery)
-        }
-    }
-    
-    // MARK: - Storage
-    
-    /// Zapisz historię do UserDefaults
-    func saveToStorage() {
+    /// Zapisuje historię do UserDefaults
+    private func saveHistory() {
         do {
-            let data = try JSONEncoder().encode(history)
-            UserDefaults.standard.set(data, forKey: storageKey)
+            let data = try JSONEncoder().encode(items)
+            defaults.set(data, forKey: historyKey)
         } catch {
-            print("Błąd przy zapisywaniu historii: \(error)")
+            print("Błąd podczas zapisywania historii: \(error)")
         }
     }
     
-    /// Załaduj historię z UserDefaults
-    func loadFromStorage() {
-        queue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-            
-            if let data = UserDefaults.standard.data(forKey: self.storageKey) {
-                do {
-                    let decoded = try JSONDecoder().decode([ClipboardItem].self, from: data)
-                    self.history = decoded
-                } catch {
-                    print("Błąd przy ładowaniu historii: \(error)")
-                    self.history = []
-                }
-            }
-            
-            DispatchQueue.main.async {
-                self.objectWillChange.send()
-            }
+    /// Wczytuje historię z UserDefaults
+    private func loadHistory() {
+        guard let data = defaults.data(forKey: historyKey) else {
+            return
+        }
+        
+        do {
+            items = try JSONDecoder().decode([ClipboardItem].self, from: data)
+        } catch {
+            print("Błąd podczas wczytywania historii: \(error)")
+            items = []
         }
     }
 }

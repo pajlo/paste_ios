@@ -1,80 +1,66 @@
 import SwiftUI
 
-/// Pojedynczy wiersz w liście historii
+/// Wiersz reprezentujący element historii
 struct ClipboardItemRow: View {
     let item: ClipboardItem
-    var onDelete: (UUID) -> Void
-    var onSelect: (ClipboardItem) -> Void
+    let onCopy: (String) -> Void
+    let onDelete: (UUID) -> Void
+    
+    @State private var isHovering = false
     
     var body: some View {
         HStack(spacing: 12) {
-            // Icon based on content type
-            Image(systemName: iconName)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.blue)
-                .frame(width: 24)
-            
-            // Content preview and metadata
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.preview)
-                    .font(.system(.body, design: .default))
                     .lineLimit(2)
+                    .font(.body)
                     .foregroundColor(.primary)
                 
-                HStack(spacing: 8) {
-                    Text(item.contentType.displayName)
-                        .font(.system(.caption, design: .default))
-                        .foregroundColor(.secondary)
-                    
-                    Divider()
-                        .frame(height: 12)
-                    
-                    Text(item.formattedTime)
-                        .font(.system(.caption, design: .default))
-                        .foregroundColor(.secondary)
-                }
+                Text(item.formattedTime)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
             
             Spacer()
             
-            // Delete button
-            Button(action: { onDelete(item.id) }) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 16))
-                    .foregroundColor(.secondary)
+            // Przyciski akcji
+            if isHovering {
+                HStack(spacing: 8) {
+                    Button(action: {
+                        onCopy(item.content)
+                    }) {
+                        Image(systemName: "doc.on.doc")
+                            .foregroundColor(.blue)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Skopiuj do schowka")
+                    
+                    Button(action: {
+                        onDelete(item.id)
+                    }) {
+                        Image(systemName: "trash")
+                            .foregroundColor(.red)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Usuń z historii")
+                }
+                .transition(.opacity)
             }
-            .buttonStyle(.plain)
-            .help("Usuń element")
         }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            onSelect(item)
-        }
-        .frame(height: Constants.itemRowHeight)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
+        .padding(12)
         .background(Color(.controlBackgroundColor))
-        .cornerRadius(4)
-    }
-    
-    private var iconName: String {
-        switch item.contentType {
-        case .text: return "doc.text.fill"
-        case .image: return "photo.fill"
-        case .file: return "folder.fill"
+        .cornerRadius(8)
+        .onHover { hovering in
+            isHovering = hovering
         }
     }
 }
 
 #Preview {
-    let item = ClipboardItem(
-        content: "To jest przykładowy tekst ze schowka",
-        contentType: .text,
-        timestamp: Date()
-    )
     ClipboardItemRow(
-        item: item,
-        onDelete: { _ in },
-        onSelect: { _ in }
+        item: ClipboardItem(content: "To jest przykładowy tekst z historii schowka"),
+        onCopy: { _ in },
+        onDelete: { _ in }
     )
+    .padding()
 }

@@ -2,75 +2,95 @@ import SwiftUI
 
 @main
 struct PasteApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject private var historyManager = HistoryManager()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .frame(minWidth: Constants.windowWidth, minHeight: Constants.windowHeight)
+                .environmentObject(historyManager)
         }
-        .windowResizability(.contentSize)
         .windowStyle(.hiddenTitleBar)
-    }
-}
-
-/// Application Delegate do obsługi globalnych hotkey
-class AppDelegate: NSObject, NSApplicationDelegate {
-    private let historyManager = HistoryManager.shared
-    private let clipboardService = ClipboardService.shared
-    private let hotKeyManager = HotKeyManager.shared
-    
-    private var historyWindow: NSWindow?
-    
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        // Setup clipboard monitoring
-        clipboardService.startMonitoring()
+        .windowResizability(.automatic)
         
-        clipboardService.onClipboardChange = { [weak self] in
-            if let content = self?.clipboardService.getCurrentContent() {
-                let item = ClipboardItem(
-                    content: content,
-                    contentType: self?.clipboardService.getContentType() ?? .text
-                )
-                self?.historyManager.addItem(item)
+        // Menu bar
+        MenuBarExtra("Paste", systemImage: "doc.on.clipboard") {
+            VStack {
+                Label("Historia schowka", systemImage: "doc.text")
+                    .padding(.horizontal)
+                    .padding(.top)
+                
+                Divider()
+                
+                if historyManager.items.isEmpty {
+                    Text("Historia pusta")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding()
+                } else {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(historyManager.items.prefix(5)) { item in
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(item.preview)
+                                        .lineLimit(1)
+                                        .font(.caption)
+                                    
+                                    Text(item.formattedTime)
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(8)
+                                .background(Color(.controlBackgroundColor))
+                                .cornerRadius(4)
+                                .onTapGesture {
+                                    copyToClipboard(item.content)
+                                }
+                                .help("Kliknij aby skopiować")
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .frame(maxHeight: 200)
+                }
+                
+                Divider()
+                
+                HStack {
+                    Button(action: {
+                        openMainWindow()
+                    }) {
+                        Label("Otwórz historię", systemImage: "window.open")
+                            .frame(maxWidth: .infinity)
+                    }
+                    
+                    Button(action: {
+                        historyManager.clearHistory()
+                    }) {
+                        Image(systemName: "trash")
+                    }
+                    .disabled(historyManager.items.isEmpty)
+                }
+                .padding()
+                
+                Divider()
+                
+                Button("Zamknij", action: NSApplication.shared.terminate)
+                    .frame(maxWidth: .infinity)
+                    .padding()
             }
+            .frame(width: 300)
         }
-        
-        // Setup hotkey
-        hotKeyManager.registerHotKey { [weak self] in
-            self?.toggleHistoryWindow()
-        }
-        
-        // Preload history from storage
-        historyManager.loadFromStorage()
-        
-        // Log startup
-        NSLog("Paste aplikacja uruchomiona - wersja \(Constants.appVersion)")
     }
     
-    func applicationWillTerminate(_ notification: Notification) {
-        clipboardService.stopMonitoring()
-        hotKeyManager.unregisterHotKey()
-        NSLog("Paste aplikacja zatrzymana")
+    private func openMainWindow() {
+        if let window = NSApplication.shared.windows.first {
+            window.makeKeyAndOrderFront(nil)
+            NSApplication.shared.activate(ignoringOtherApps: true)
+        }
     }
     
-    // MARK: - Window Management
-    
-    private func toggleHistoryWindow() {
-        // Sprawdź czy okno już istnieje i jest widoczne
-        if let window = NSApplication.shared.windows.first(where: { $0.title.isEmpty || $0.title == "ContentView" }) {
-            if window.isVisible {
-                window.close()
-                return
-            } else {
-                window.makeKeyAndOrderFront(nil)
-                NSApplication.shared.activate(ignoringOtherApps: true)
-                return
-            }
-        }
-        
-        // Jeśli nie istnieje, pokaż okno z ContentView
-        NSApplication.shared.windows.first?.makeKeyAndOrderFront(nil)
-        NSApplication.shared.activate(ignoringOtherApps: true)
+    private func copyToClipboard(_ content: String) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(content, forType: .string)
     }
 }
