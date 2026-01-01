@@ -1,0 +1,34 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+		/* Begin PBXBuildFile section */
+		3A1B2C3D4E5F6G7H8I9J0K1L /* PasteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1B2C3D4E5F6G7H8I9J0K1L /* PasteApp.swift */; };
+		3A1B2C3D4E5F6G7H8I9J0K2M /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1B2C3D4E5F6G7H8I9J0K2M /* ContentView.swift */; };
+		3A1B2C3D4E5F6G7H8I9J0K3N /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1B2C3D4E5F6G7H8I9J0K3N /* HistoryListView.swift */; };
+		3A1B2C3D4E5F6G7H8I9J0K4O /* ClipboardItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1B2C3D4E5F6G7H8I9J0K4O /* ClipboardItemRow.swift */; };
+		3A1B2C3D4E5F6G7H8I9J0K5P /* ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1B2C3D4E5F6G7H8I9J0K5P /* ClipboardItem.swift */; };
+		3A1B2C3D4E5F6G7H8I9J0K6Q /* ClipboardService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1B2C3D4E5F6G7H8I9J0K6Q /* ClipboardService.swift */; };
+		3A1B2C3D4E5F6G7H8I9J0K7R /* HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1B2C3D4E5F6G7H8I9J0K7R /* HistoryManager.swift */; };
+		3A1B2C3D4E5F6G7H8I9J0K8S /* HotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1B2C3D4E5F6G7H8I9J0K8S /* HotKeyManager.swift */; };
+		3A1B2C3D4E5F6G7H8I9J0K9T /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A1B2C3D4E5F6G7H8I9J0K9T /* Constants.swift */; };
+		/* End PBXBuildFile section */
+
+		/* Begin PBXFileReference section */
+		3A1B2C3D4E5F6G7H /* Paste.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Paste.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A1B2C3D4E5F6G7H8I9J0K1L /* PasteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteApp.swift; sourceTree = "<group>"; };
+		3A1B2C3D4E5F6G7H8I9J0K2M /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		3A1B2C3D4E5F6G7H8I9J0K3N /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
+		3A1B2C3D4E5F6G7H8I9J0K4O /* ClipboardItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItemRow.swift; sourceTree = "<group>"; };
+		3A1B2C3D4E5F6G7H8I9J0K5P /* ClipboardItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItem.swift; sourceTree = "<group>"; };
+		3A1B2C3D4E5F6G7H8I9J0K6Q /* ClipboardService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardService.swift; sourceTree = "<group>"; };
+		3A1B2C3D4E5F6G7H8I9J0K7R /* HistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryManager.swift; sourceTree = "<group>"; };
+		3A1B2C3D4E5F6G7H8I9J0K8S /* HotKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyManager.swift; sourceTree = "<group>"; };
+		3A1B2C3D4E5F6G7H8I9J0K9T /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		/* End PBXFileReference section */
+	};
+	rootObject = 3A1B2C3D4E5F6G7H /* Project object */;
+}

@@ -1,0 +1,55 @@
+# Xcode
+build/
+DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcworkspace
+xcuserdata/
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+*.xcarchive
+*.swiftpm
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+
+# IDE specific
+*.iml
+out/
+
+# Node (if used for build scripts)
+node_modules/
+npm-debug.log
+
+# Generated files
+.generated/
+
+# Misc
+*.orig

@@ -1,0 +1,30 @@
+# Paste_ios
+
+Lokalna kopia projektu Paste macOS aplikacji
+
+## Struktura
+
+- `/Paste` - Kod aplikacji Swift
+- `/Tests` - Testy jednostkowe
+- `/Scripts` - Skrypty budowania
+- `/docs` - Dokumentacja techniczna
+
+## Szybki start
+
+```bash
+open Paste/Paste.xcodeproj
+# Cmd+B to build
+# Cmd+R to run
+```
+
+## Dokumentacja
+
+- `README.md` - Opis aplikacji
+- `PRD.md` - Product Requirements Document
+- `DEVELOPMENT_GUIDE.md` - Przewodnik dla deweloperów
+- `SETUP_INSTRUCTIONS.md` - Instrukcje instalacji
+- `CONTRIBUTING.md` - Jak wnieść wkład
+
+## Licencja
+
+MIT

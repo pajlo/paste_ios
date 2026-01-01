@@ -1,0 +1,51 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# Xcode build files
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcworkspace/
+xcuserdata/
+*.xcarchive
+*.dSYM
+*.app
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Swift Package Manager
+.build/
+.swiftpm/
+*.xcconfig
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.sublime-*
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+*.logs
+
+# Temporary files
+*.tmp
+*.temp
+*_OLD
+
+# Other
+.idea/
+*.iml
